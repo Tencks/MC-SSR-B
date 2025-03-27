@@ -1,0 +1,66 @@
+###
+GET http://localhost:3000/api/employes
+
+###
+post http://localhost:3000/api/employes
+content-type: application/json
+
+{
+    "name": "Morak",
+    "position" : "sr.dev",
+    "office": "Develps",
+    "salary": "100000"
+}
+
+###
+GET http://localhost:3000/api/employes/67d1baeaea681e21ac0981ed
+
+###
+DELETE http://localhost:3000/api/employes/67d1baf1ea681e21ac0981ef
+
+###
+PUT http://localhost:3000/api/employes/67d1baeaea681e21ac0981ed
+content-type: application/json
+
+{
+    "position" : "CEO",
+    "name": "OtakV23"
+}
+
+###
+GET http://localhost:3000/api/parametros
+###
+POST http://localhost:3000/api/parametros
+content-type: application/json
+
+{
+    "backgroundColor" :{
+        "name": "Palido",
+        "value": "#B5A8D5"
+    },
+    "textColor": {
+        "name": "violento",
+        "value": "#211C84"
+    },
+    "language" : {
+        "name": "español",
+        "code": "es"
+    },
+    "dark_mode": true,
+    "name":"test"
+}
+
+###
+PUT http://localhost:3000/api/parametros/67e36aa1406706991ef5b897
+content-type: application/json
+
+{
+   "backgroundCard":{
+    "name":"darklight",
+    "value":"#B6BBC4"
+   },
+   "backgroundNavbar":{
+    "name":"darklight",
+    "value":"#B6BBC4"
+   }
+}
