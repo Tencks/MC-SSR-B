@@ -51,16 +51,16 @@ content-type: application/json
 }
 
 ###
-PUT http://localhost:3000/api/parametros/67e36aa1406706991ef5b897
+PUT http://localhost:3000/api/parametros/67e4aedd620a5af32fc2856b
 content-type: application/json
 
 {
-   "backgroundCard":{
-    "name":"darklight",
-    "value":"#B6BBC4"
-   },
-   "backgroundNavbar":{
-    "name":"darklight",
-    "value":"#B6BBC4"
-   }
+    "textColor": {
+      "name": "violento",
+      "value": "#3BD4A1"
+    },
+    "backgroundNavbar": {
+      "name": "oscuro",
+      "value": "#4D55CC"
+    }
 }

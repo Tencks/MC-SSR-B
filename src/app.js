@@ -3,6 +3,8 @@ const morgan = require('morgan');
 const cors = require('cors');
 const parametrosRoutes = require('./routes/parametros.routes');
 const employedsRoutes = require('./routes/employeds.routes');
+const usersRoutes = require('./routes/user.routes');
+const authRoutes = require('./routes/auth.routes');
 
 const app = express();
 
@@ -17,7 +19,10 @@ app.use(express.json());
 app.use(express.urlencoded({extended:false}));
 
 //Routes ENDPOINTS
+app.use("/api/auth", authRoutes );
 app.use("/api/parametros", parametrosRoutes);
 app.use("/api/employes", employedsRoutes);
+app.use("/api/users", usersRoutes );
+
 
 module.exports = app;
