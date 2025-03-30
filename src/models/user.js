@@ -6,7 +6,8 @@ const UserSchema = new Schema({
     email: { type: String, required: true, unique: true, trim: true },
     password: { type: String, required: true },
     role: { type: String, default: 'user', enum: ['user', 'admin', 'master'] },
-    active: { type: Boolean, default: true }
+    active: { type: Boolean, default: true },
+    userAvatar: { type: String }, // Nuevo campo para avatar
 }, {
     timestamps: true,
     versionKey: false

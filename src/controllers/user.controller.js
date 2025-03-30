@@ -75,6 +75,37 @@ class UserController {
             res.status(500).json({ message: 'Error al obtener usuarios', error });
         }
     }
+
+    async updateAvatar(req, res) {
+        try {
+            if (!req.file) {
+                return res.status(400).json({ message: 'No se ha subido ninguna imagen' });
+            }
+    
+            const user = await User.findById(req.params.id);
+            if (!user) {
+                return res.status(404).json({ message: 'Usuario no encontrado' });
+            }
+    
+            user.userAvatar = `/uploads/avatars/${req.file.filename}`;
+            await user.save();
+    
+            res.status(200).json({
+                message: 'Avatar actualizado exitosamente',
+                user: {
+                    id: user._id,
+                    name: user.name,
+                    email: user.email,
+                    userAvatar: user.userAvatar
+                }
+            });
+        } catch (error) {
+            res.status(500).json({ 
+                message: 'Error al actualizar el avatar', 
+                error: error.message 
+            });
+        }
+    }
 }
 const UsersController = new UserController();
 module.exports = UsersController;

@@ -1,30 +1,56 @@
 const User = require('../models/user');
 const jwt = require('jsonwebtoken');
-const { JWT_SECRET } = require('../utils/auth.middleware');
+const { JWT_SECRET } = require('../config/config');
 
 class AuthController {
     async register(req, res) {
         try {
-            const { email } = req.body;
+            const { email, name, password } = req.body;
             
-            // Verificar si el usuario ya existe
-            const userExists = await User.findOne({ email });
-            if (userExists) {
-                return res.status(400).json({ message: 'El email ya está registrado' });
+            // Validate required fields
+            if (!email || !name || !password) {
+                return res.status(400).json({ 
+                    message: 'Todos los campos son requeridos' 
+                });
             }
 
-            // Crear nuevo usuario
-            const user = new User(req.body);
+            // Check if user exists by email or name
+            const userExists = await User.findOne({ 
+                $or: [
+                    { email: email },
+                    { name: name }
+                ]
+            });
+
+            if (userExists) {
+                return res.status(400).json({ 
+                    message: userExists.email === email 
+                        ? 'El email ya está registrado' 
+                        : 'El nombre de usuario ya está registrado'
+                });
+            }
+
+            // Create new user with default role
+            const user = new User({
+                ...req.body,
+                role: 'user' // Set default role
+            });
+
             await user.save();
 
-            // Generar token
+            // Generate tokens
             const token = jwt.sign({ id: user._id }, JWT_SECRET, {
-                expiresIn: 86400 // 24 horas
+                expiresIn: '1h' // 1 hour for access token
+            });
+
+            const refreshToken = jwt.sign({ id: user._id }, JWT_SECRET, {
+                expiresIn: '7d' // 7 days for refresh token
             });
 
             res.status(201).json({
                 message: 'Usuario registrado exitosamente',
                 token,
+                refreshToken,
                 user: {
                     id: user._id,
                     name: user.name,
@@ -33,7 +59,11 @@ class AuthController {
                 }
             });
         } catch (error) {
-            res.status(500).json({ message: 'Error en el registro', error });
+            console.error('Register error:', error);
+            res.status(500).json({ 
+                message: 'Error en el registro',
+                error: error.message 
+            });
         }
     }
 
