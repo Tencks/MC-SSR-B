@@ -102,6 +102,7 @@ class AuthController {
             res.json({
                 message: 'Login exitoso',
                 token,
+                refreshToken,
                 user: {
                     id: user._id,
                     name: user.name,
