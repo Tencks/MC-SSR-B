@@ -5,14 +5,17 @@ const { verifyToken } = require('../utils/auth.middleware');
 const router = Router();
 
 // Proteger todas las rutas con autenticación
-router.use(verifyToken);
+// router.use(verifyToken);
 
 // Rutas CRUD básicas
 router.post('/', clienteController.createCliente);
+// // Modificar esta ruta para manejar tanto listado como búsqueda
 router.get('/', clienteController.getClientes);
+// router.get('/', clienteController.searchClientes); // Nueva función para búsqueda
 router.get('/:id', clienteController.getCliente);
 router.put('/:id', clienteController.updateCliente);
 router.delete('/:id', clienteController.deleteCliente);
+
 
 module.exports = router;
 

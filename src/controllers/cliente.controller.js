@@ -20,6 +20,41 @@ class ClienteController {
         }
     }
 
+     async searchClientes(req, res) {
+        try {
+            const { cod_cliente, name, search } = req.query;
+            let query = {};
+    
+            // Construir query dinámicamente
+            if (cod_cliente) {
+                query.cod_cliente = cod_cliente;
+            }
+            if (name) {
+                query.name = { $regex: name, $options: 'i' }; // búsqueda insensible a mayúsculas/minúsculas
+            }
+            if (search) {
+                query.$or = [
+                    { name: { $regex: search, $options: 'i' } },
+                    { cod_cliente: { $regex: search, $options: 'i' } }
+                ];
+            }
+    
+            const clientes = await Cliente.find(query);
+            
+            res.json({
+                clientes,
+                pagination: {
+                    total: clientes.length,
+                    pages: 1,
+                    currentPage: 1,
+                    limit: 10
+                }
+            });
+        } catch (error) {
+            res.status(500).json({ message: error.message });
+        }
+    };
+
     async getClientes(req, res) {
         try {
             const { 

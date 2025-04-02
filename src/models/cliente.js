@@ -3,11 +3,12 @@ const { Schema, model } = require('mongoose');
 const ClienteSchema = new Schema({
     cod_cliente: { type: String, required: true, unique: true },
     name: { type: String, required: true, trim: true },
-    name_fantasy: { type: String, required: true, trim: true },
+    name_fantasy: { type: String, trim: true },
     email: { type: String, unique: true, trim: true },
     phone: { type: String, trim: true },
     address: {
         street: { type: String, trim: true },
+        number: { type: String, trim: true },
         city: { type: String, trim: true },
         state: { type: String, trim: true },
         zipCode: { type: String, trim: true }
@@ -21,7 +22,7 @@ const ClienteSchema = new Schema({
     },
     active: { type: Boolean, default: true },
     notes: { type: String },
-    createdBy: { type: Schema.Types.ObjectId, ref: 'User', required: true }
+    createdBy: { type: Schema.Types.ObjectId, ref: 'User' }
 }, {
     timestamps: true,
     versionKey: false

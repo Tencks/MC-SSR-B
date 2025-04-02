@@ -64,3 +64,25 @@ content-type: application/json
       "value": "#4D55CC"
     }
 }
+
+###
+GET http://localhost:3000/api/clientes
+
+###
+POST http://localhost:3000/api/clientes
+content-type: application/json
+
+{
+    "cod_cliente": "51241",
+    "name":"Ludmila",
+    "phone": "3471100199",
+    "address":{
+        "street": "calle 1",
+        "number": "123",
+        "city": "Medellin",
+        "state": "Antioquia"
+    },
+    "documentType":"DNI",
+    "documentNumber":"45222999",
+    "notes":"Cargado desde el apiRest"
+}
