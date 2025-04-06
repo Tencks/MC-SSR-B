@@ -8,10 +8,10 @@ class ProductController {
                 createdBy: req.userId
             });
             await newProduct.save();
-            res.status(201).json({
-                message: 'Producto creado exitosamente',
-                product: newProduct
-            });
+            res.status(201).json(
+                // message: 'Producto creado exitosamente',
+                 newProduct
+            );
         } catch (error) {
             res.status(500).json({ 
                 message: 'Error al crear producto', 
@@ -122,10 +122,10 @@ class ProductController {
                 return res.status(404).json({ message: 'Producto no encontrado' });
             }
 
-            res.status(200).json({
-                message: 'Producto actualizado exitosamente',
-                product: updatedProduct
-            });
+            res.status(200).json(
+                // message: 'Producto actualizado exitosamente',
+                 updatedProduct
+            );
         } catch (error) {
             res.status(500).json({ 
                 message: 'Error al actualizar producto', 
@@ -201,6 +201,24 @@ class ProductController {
                 message: 'Error al actualizar la imagen', 
                 error: error.message 
             });
+        }
+    }
+
+    async getProductByCod(req, res)  {
+        try {
+            const codProducto = req.params.codProducto;
+            const product = await Product.findOne({ codProducto });
+
+            if (!product) {
+                return res.status(404).json({ message: 'Producto no encontrado' });
+            }
+            
+            res.json(product);
+        } catch (error) {
+           res.status(500).json({
+                message: 'Error al obtener producto',
+                error: error.message
+            }); 
         }
     }
 }
