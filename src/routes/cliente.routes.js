@@ -16,6 +16,9 @@ router.get('/:id', clienteController.getCliente);
 router.put('/:id', clienteController.updateCliente);
 router.delete('/:id', clienteController.deleteCliente);
 
+// router.get('/codigo/:codCliente', clienteController.getClienteByCod);
+router.get('/codigo/:codCliente', clienteController.getClientesByCodCliente);
+
 
 module.exports = router;
 

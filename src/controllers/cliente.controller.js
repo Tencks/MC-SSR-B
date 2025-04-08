@@ -20,22 +20,26 @@ class ClienteController {
         }
     }
 
-     async searchClientes(req, res) {
+     async getClienteByCod(req, res) {
         try {
-            const { cod_cliente, name, search } = req.query;
+            const { codCliente, nombre, fantasia, search } = req.query;
             let query = {};
     
             // Construir query dinámicamente
-            if (cod_cliente) {
-                query.cod_cliente = cod_cliente;
+            if (codCliente) {
+                query.codCliente = codCliente;
             }
-            if (name) {
-                query.name = { $regex: name, $options: 'i' }; // búsqueda insensible a mayúsculas/minúsculas
+            if (nombre) {
+                query.nombre = { $regex: nombre, $options: 'i' }; // búsqueda insensible a mayúsculas/minúsculas
+            }
+            if (fantasia) {
+                query.fantasia = { $regex: fantasia, $options: 'i' }; // búsqueda insensible a mayúsculas/minúsculas
             }
             if (search) {
                 query.$or = [
-                    { name: { $regex: search, $options: 'i' } },
-                    { cod_cliente: { $regex: search, $options: 'i' } }
+                    { nombre: { $regex: search, $options: 'i' } },
+                    { fantasia: { $regex: search, $options: 'i' } },
+                    { codCliente: { $regex: search, $options: 'i' } }
                 ];
             }
     
@@ -54,6 +58,26 @@ class ClienteController {
             res.status(500).json({ message: error.message });
         }
     };
+
+    async getClientesByCodCliente(req, res) {
+       
+            try {
+                const codCliente = req.params.codCliente;
+                const client = await Cliente.findOne({ codCliente });
+    
+                if (!client) {
+                    return res.status(404).json({ message: 'cliente no encontrado' });
+                }
+                
+                res.json(client);
+            } catch (error) {
+               res.status(500).json({
+                    message: 'Error al obtener cliente',
+                    error: error.message
+                }); 
+            }
+        
+    }
 
     async getClientes(req, res) {
         try {

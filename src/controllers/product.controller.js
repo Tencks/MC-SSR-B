@@ -23,7 +23,9 @@ class ProductController {
     async getProducts(req, res) {
         try {
             const { 
-                search, 
+                search,
+                codProducto,
+                nombre, 
                 grupo,
                 subgrupo,
                 marca,
@@ -37,16 +39,18 @@ class ProductController {
                 page = 1,
                 limit = 10
             } = req.query;
-
+    
             const filters = {};
             
-            // Construir filtros
+            // Construir filtros con regex para búsquedas parciales
             if (active !== undefined) filters.active = active === 'true';
-            if (grupo) filters.grupo = grupo;
-            if (subgrupo) filters.subgrupo = subgrupo;
-            if (marca) filters.marca = marca;
-            if (categoria) filters.categoria = categoria;
-            if (unidadMedida) filters.unidadMedida = unidadMedida;
+            if (grupo) filters.grupo = { $regex: grupo, $options: 'i' };
+            if (subgrupo) filters.subgrupo = { $regex: subgrupo, $options: 'i' };
+            if (marca) filters.marca = { $regex: marca, $options: 'i' };
+            if (categoria) filters.categoria = { $regex: categoria, $options: 'i' };
+            if (unidadMedida) filters.unidadMedida = { $regex: unidadMedida, $options: 'i' };
+            if (codProducto) filters.codProducto = { $regex: codProducto, $options: 'i' };
+            if (nombre) filters.nombre = { $regex: nombre, $options: 'i' };
             
             // Filtro por rango de precios
             if (minPrice || maxPrice) {
@@ -54,18 +58,18 @@ class ProductController {
                 if (minPrice) filters.precioConIva.$gte = parseFloat(minPrice);
                 if (maxPrice) filters.precioConIva.$lte = parseFloat(maxPrice);
             }
-
+    
             // Búsqueda general
             if (search) {
                 filters.$or = [
                     { nombre: { $regex: search, $options: 'i' } },
                     { descripcion: { $regex: search, $options: 'i' } },
-                    { cod_producto: { $regex: search, $options: 'i' } }
+                    { codProducto: { $regex: search, $options: 'i' } }
                 ];
             }
-
+    
             const skip = (page - 1) * limit;
-
+    
             const [products, total] = await Promise.all([
                 Product.find(filters)
                     .populate('createdBy', 'name email')
@@ -74,16 +78,9 @@ class ProductController {
                     .limit(parseInt(limit)),
                 Product.countDocuments(filters)
             ]);
-
-            res.status(200).json({
-                products,
-                pagination: {
-                    total,
-                    pages: Math.ceil(total / limit),
-                    currentPage: parseInt(page),
-                    limit: parseInt(limit)
-                }
-            });
+    
+            // Modificar la respuesta para que coincida con lo que espera el frontend
+            res.status(200).json(products); // Send just the products array
         } catch (error) {
             res.status(500).json({ 
                 message: 'Error al obtener productos', 
