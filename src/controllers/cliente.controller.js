@@ -119,15 +119,17 @@ class ClienteController {
                 Cliente.countDocuments(filters)
             ]);
 
-            res.status(200).json({
-                clientes,
-                pagination: {
-                    total,
-                    pages: Math.ceil(total / limit),
-                    currentPage: parseInt(page),
-                    limit: parseInt(limit)
-                }
-            });
+            // res.status(200).json({
+            //     clientes,
+            //     pagination: {
+            //         total,
+            //         pages: Math.ceil(total / limit),
+            //         currentPage: parseInt(page),
+            //         limit: parseInt(limit)
+            //     }
+            // });
+            res.status(200).json(clientes)
+
         } catch (error) {
             res.status(500).json({ 
                 message: 'Error al obtener clientes', 
