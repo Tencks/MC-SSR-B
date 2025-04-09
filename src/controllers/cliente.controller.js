@@ -82,34 +82,44 @@ class ClienteController {
     async getClientes(req, res) {
         try {
             const { 
-                search, 
-                ivaType, 
-                documentType, 
+                search,
+                codCliente,
+                nombre,
+                fantasia,
+                grupo,
+                subgrupo,
+                documentacion,
+                email,
                 active,
                 sortBy = 'createdAt',
                 order = 'desc',
                 page = 1,
                 limit = 10
             } = req.query;
-
+    
             const filters = {};
             
-            // Build filters
+            // Construir filtros con regex para búsquedas parciales
             if (active !== undefined) filters.active = active === 'true';
-            if (ivaType) filters.ivaType = ivaType;
-            if (documentType) filters.documentType = documentType;
+            if (codCliente) filters.codCliente = { $regex: codCliente, $options: 'i' };
+            if (nombre) filters.nombre = { $regex: nombre, $options: 'i' };
+            if (fantasia) filters.fantasia = { $regex: fantasia, $options: 'i' };
+            if (grupo) filters.grupo = { $regex: grupo, $options: 'i' };
+            if (subgrupo) filters.subgrupo = { $regex: subgrupo, $options: 'i' };
+            if (email) filters.email = { $regex: email, $options: 'i' };
+            
+            // Búsqueda general
             if (search) {
                 filters.$or = [
-                    { name: { $regex: search, $options: 'i' } },
-                    { name_fantasy: { $regex: search, $options: 'i' } },
-                    { email: { $regex: search, $options: 'i' } },
-                    { cod_cliente: { $regex: search, $options: 'i' } },
-                    { documentNumber: { $regex: search, $options: 'i' } }
+                    { nombre: { $regex: search, $options: 'i' } },
+                    { fantasia: { $regex: search, $options: 'i' } },
+                    { codCliente: { $regex: search, $options: 'i' } },
+                    { email: { $regex: search, $options: 'i' } }
                 ];
             }
-
+    
             const skip = (page - 1) * limit;
-
+    
             const [clientes, total] = await Promise.all([
                 Cliente.find(filters)
                     .populate('createdBy', 'name email')
@@ -118,18 +128,8 @@ class ClienteController {
                     .limit(parseInt(limit)),
                 Cliente.countDocuments(filters)
             ]);
-
-            // res.status(200).json({
-            //     clientes,
-            //     pagination: {
-            //         total,
-            //         pages: Math.ceil(total / limit),
-            //         currentPage: parseInt(page),
-            //         limit: parseInt(limit)
-            //     }
-            // });
-            res.status(200).json(clientes)
-
+    
+            res.status(200).json(clientes);
         } catch (error) {
             res.status(500).json({ 
                 message: 'Error al obtener clientes', 
