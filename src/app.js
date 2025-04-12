@@ -2,12 +2,14 @@ const express = require('express');
 const morgan = require('morgan');
 const cors = require('cors');
 const parametrosRoutes = require('./routes/parametros.routes');
-const employedsRoutes = require('./routes/employeds.routes');
-const usersRoutes = require('./routes/user.routes');
-const authRoutes = require('./routes/auth.routes');
-const clienteRoutes = require('./routes/cliente.routes');
-const ventaRoutes = require('./routes/venta.routes');
-const productsRoutes = require('./routes/product.routes');
+const employedsRoutes = require('./routes/Otros/employeds.routes');
+const usersRoutes = require('./routes/Auth/user.routes');
+const authRoutes = require('./routes/Auth/auth.routes');
+const clienteRoutes = require('./routes/Cruds/Clientes/cliente.routes');
+const ventaRoutes = require('./routes/Otros/venta.routes');
+const productsRoutes = require('./routes/Cruds/Productos/product.routes');
+const grupoProductos = require('./routes/Cruds/Productos/grupoProduct.route');
+const subGrupoProductos = require('./routes/Cruds/Productos/subGrupoProduct.route');
 
 
 const app = express();
@@ -39,9 +41,12 @@ app.use("/api/auth", authRoutes );
 app.use("/api/parametros", parametrosRoutes);
 app.use("/api/employes", employedsRoutes);
 app.use("/api/users", usersRoutes );
-app.use("/api/products", productsRoutes)
+app.use("/api/products", productsRoutes);
+app.use("/api/produdctos/grupos", grupoProductos);
+app.use("/api/prodcuctos/subgrupos", subGrupoProductos);
 app.use("/api/clientes", clienteRoutes );
 app.use("/api/ventas", ventaRoutes );
+
 
 
 

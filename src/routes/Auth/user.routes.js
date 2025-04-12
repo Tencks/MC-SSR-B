@@ -1,7 +1,7 @@
 const { Router } = require('express');
-const UserController = require('../controllers/Auth/user.controller');
-const { verifyToken } = require('../utils/auth.middleware');
-const uploadAvatar = require('../utils/uploadAvatar.middleware');
+const UserController = require('../../controllers/Auth/user.controller');
+const { verifyToken } = require('../../utils/auth.middleware');
+const uploadAvatar = require('../../utils/uploadAvatar.middleware');
 
 const router = Router();
 
