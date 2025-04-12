@@ -1,7 +1,7 @@
 
 const employedCtr= {}
 
-const Employee = require('../models/Employed');
+const Employee = require('../../models/Otros/Employed');
 
 
 employedCtr.createEmploye = async (req, res) => {

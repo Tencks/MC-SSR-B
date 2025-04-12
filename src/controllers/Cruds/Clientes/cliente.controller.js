@@ -1,4 +1,4 @@
-const Cliente = require('../models/cliente');
+const Cliente = require('../../../models/Cruds/Clientes/cliente');
 
 class ClienteController {
     async createCliente(req, res) {

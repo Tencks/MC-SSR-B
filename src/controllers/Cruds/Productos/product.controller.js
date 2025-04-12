@@ -1,4 +1,4 @@
-const Product = require('../models/product');
+const Product = require('../../../models/Cruds/Productos/product');
 
 class ProductController {
     async createProduct(req, res) {
@@ -73,6 +73,8 @@ class ProductController {
             const [products, total] = await Promise.all([
                 Product.find(filters)
                     .populate('createdBy', 'name email')
+                    .populate('grupo', 'codGrupo nombre')
+                    .populate('subgrupo', 'codSubGrupo nombre')
                     .sort({ [sortBy]: order })
                     .skip(skip)
                     .limit(parseInt(limit)),
@@ -92,7 +94,9 @@ class ProductController {
     async getProduct(req, res) {
         try {
             const product = await Product.findById(req.params.id)
-                .populate('createdBy', 'name email');
+            .populate('createdBy', 'name email')
+            .populate('grupo', 'codGrupo nombre')
+            .populate('subgrupo', 'codSubGrupo nombre');
             
             if (!product) {
                 return res.status(404).json({ message: 'Producto no encontrado' });
@@ -113,7 +117,10 @@ class ProductController {
                 req.params.id,
                 req.body,
                 { new: true, runValidators: true }
-            ).populate('createdBy', 'name email');
+            )
+            .populate('createdBy', 'name email')
+            .populate('grupo', 'codGrupo nombre')
+            .populate('subgrupo', 'codSubGrupo nombre');    
 
             if (!updatedProduct) {
                 return res.status(404).json({ message: 'Producto no encontrado' });
@@ -204,7 +211,9 @@ class ProductController {
     async getProductByCod(req, res)  {
         try {
             const codProducto = req.params.codProducto;
-            const product = await Product.findOne({ codProducto });
+            const product = await Product.findOne({ codProducto })
+                .populate('grupo', 'codGrupo nombre')
+                .populate('subgrupo', 'codSubGrupo nombre');
 
             if (!product) {
                 return res.status(404).json({ message: 'Producto no encontrado' });

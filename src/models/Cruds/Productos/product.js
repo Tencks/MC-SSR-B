@@ -21,8 +21,15 @@ const ProductSchema = new Schema({
         // required: true,
         default: 'UNIDAD'
     },
-    grupo: { type: String , default: 'NO ESPECIFICADO'},
-    subgrupo: { type: String, },
+    grupo: { 
+        type: Schema.Types.ObjectId,
+        ref:'grupoProduct',
+        required: true
+    },
+    subgrupo: { 
+        type: Schema.Types.ObjectId,
+        ref:'subGrupoProduct',
+     },
     stockActual: { type: Number, default: 0 },
     stockMinimo: { type: Number, default: 5 },
     stockMaximo: { type: Number },

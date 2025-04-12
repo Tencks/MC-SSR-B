@@ -1,8 +1,8 @@
-const Venta = require('../models/venta');
-const Cliente = require('../models/cliente');
-const Product = require('../models/product');
-const StockMovimiento = require('../models/stockMovimiento');
-const DeletionLog = require('../models/deletionLog');
+const Venta = require('../../models/Otros/venta');
+const Cliente = require('../../models/Cruds/Clientes/cliente');
+const Product = require('../../models/Cruds/Productos/product');
+const StockMovimiento = require('../../models/Otros/stockMovimiento');
+const DeletionLog = require('../../models/Otros/deletionLog');
 
 class VentaController {
     async createVenta(req, res) {

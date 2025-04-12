@@ -1,4 +1,4 @@
-const Parametros = require('../models/parametros');
+const Parametros = require('../../models/Parametros/parametros');
 
 class ParametrosController {
     

@@ -1,7 +1,7 @@
 const { Router } = require('express');
 const router = Router();
 
-const employedsCtr = require('../controllers/employed.controllers');
+const employedsCtr = require('../controllers/Otros/employed.controller');
 
 // /api/employes
 router.get('/',  employedsCtr.getEmployes);

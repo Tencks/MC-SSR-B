@@ -1,6 +1,6 @@
-const User = require('../models/user');
-const jwt = require('jsonwebtoken');
-const { JWT_SECRET } = require('../config/config');
+const User = require('../../models/Auth/user');
+// const jwt = require('jsonwebtoken');
+const { JWT_SECRET } = require('../../config/config');
 
 class AuthController {
     async register(req, res) {
