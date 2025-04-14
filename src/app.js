@@ -42,8 +42,8 @@ app.use("/api/parametros", parametrosRoutes);
 app.use("/api/employes", employedsRoutes);
 app.use("/api/users", usersRoutes );
 app.use("/api/products", productsRoutes);
-app.use("/api/produdctos/grupos", grupoProductos);
-app.use("/api/prodcuctos/subgrupos", subGrupoProductos);
+app.use("/api/productsGrupos", grupoProductos);
+app.use("/api/productsSubGrupos", subGrupoProductos);
 app.use("/api/clientes", clienteRoutes );
 app.use("/api/ventas", ventaRoutes );
 

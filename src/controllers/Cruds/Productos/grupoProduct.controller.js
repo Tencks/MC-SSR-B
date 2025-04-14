@@ -33,16 +33,16 @@ class GrupoProductController {
     
             const filters = {};
             
-            // Construir filtros
+            // Construir filtros con regex para búsquedas parciales
             if (active !== undefined) filters.active = active === 'true';
-            if (codGrupo) filters.codGrupo = codGrupo;
+            if (codGrupo) filters.codGrupo = { $regex: codGrupo, $options: 'i' };
             if (nombre) filters.nombre = { $regex: nombre, $options: 'i' };
     
             // Búsqueda general
             if (search) {
                 filters.$or = [
                     { nombre: { $regex: search, $options: 'i' } },
-                    { codGrupo: search }
+                    { codGrupo: { $regex: search, $options: 'i' } }
                 ];
             }
     
