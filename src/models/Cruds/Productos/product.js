@@ -67,6 +67,12 @@ const ProductSchema = new Schema({
     serializado: { type: Boolean, default: false },
     requiereAutorizacion: { type: Boolean, default: false },
     editable: { type: Boolean, default: true },
+    // Agregar la referencia al usuario que lo creó
+    createdBy: {
+        type: Schema.Types.ObjectId,
+        ref: 'User',  // Asegúrate de que 'User' sea el nombre correcto de tu modelo de usuario
+        required: true
+    }
 }, {
     timestamps: true,
     versionKey: false

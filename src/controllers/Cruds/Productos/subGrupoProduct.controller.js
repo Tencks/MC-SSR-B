@@ -17,6 +17,21 @@ class SubGrupoProductController {
         }
     }
 
+    async getSubGrupo(req,res){
+        try {
+           const subgrupo = await SubGrupoProduct.findById(req.params.id || req.params._id)
+           .populate('createdBy', 'name email')
+           .populate('grupo', 'codGrupo nombre');
+           if(!subgrupo) return res.status(404).json({message: 'Subgrupo no encontrado'});
+           res.status(200).json(subgrupo); 
+        } catch (error) {
+            res.status(500).json({
+                message: 'Error al obtener subgrupo',
+                error: error.message
+            });
+        }
+    }
+
     async getSubGrupos(req, res) {
         try {
             const { 

@@ -8,7 +8,7 @@ const router = Router();
 
 router.post('/', grupoController.createGrupo);
 router.get('/', grupoController.getGrupos);
-// router.get('/:id', grupoController.getGrupo);
+router.get('/:id', grupoController.getGrupo);
 router.put('/:id', grupoController.updateGrupo);
 router.delete('/:id', grupoController.deleteGrupo);
 

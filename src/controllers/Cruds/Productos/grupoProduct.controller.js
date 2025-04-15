@@ -6,7 +6,9 @@ class GrupoProductController {
         try {
             const newGrupo = new GrupoProduct({
                 ...req.body,
-                createdBy: req.userId
+                createdBy: req.userId 
+                // createdBy: req.userId || 'UserUndefined',
+                // updateBy: req.userId || 'UserUpdateUndefined'
             });
             await newGrupo.save();
             res.status(201).json(newGrupo);
@@ -62,6 +64,20 @@ class GrupoProductController {
             res.status(500).json({ 
                 message: 'Error al obtener grupos', 
                 error: error.message 
+            });
+        }
+    }
+
+    async getGrupo(req,res){
+        try {
+           const grupo = await GrupoProduct.findById(req.params.id || req.params._id)
+           .populate('createdBy', 'name email');
+           if(!grupo) return res.status(404).json({message: 'Grupo no encontrado'});
+           res.status(200).json(grupo); 
+        } catch (error) {
+            res.status(500).json({
+                message: 'Error al obtener grupo',
+                error: error.message
             });
         }
     }
