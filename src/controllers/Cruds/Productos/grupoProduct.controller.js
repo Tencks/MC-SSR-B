@@ -4,14 +4,21 @@ const GrupoProduct = require('../../../models/Cruds/Productos/grupo');
 class GrupoProductController {
     async createGrupo(req, res) {
         try {
+            if (!req.userId) {
+                return res.status(401).json({ message: 'Usuario no autenticado' });
+            }
+
             const newGrupo = new GrupoProduct({
                 ...req.body,
-                createdBy: req.userId 
-                // createdBy: req.userId || 'UserUndefined',
-                // updateBy: req.userId || 'UserUpdateUndefined'
+                createdBy: req.userId,
+                updatedBy: req.userId
             });
             await newGrupo.save();
-            res.status(201).json(newGrupo);
+            
+            const populatedGrupo = await GrupoProduct.findById(newGrupo._id)
+                .populate('createdBy', 'name email');
+                
+            res.status(201).json(populatedGrupo);
         } catch (error) {
             res.status(500).json({ 
                 message: 'Error al crear grupo', 
@@ -52,7 +59,8 @@ class GrupoProductController {
     
             const [grupos, total] = await Promise.all([
                 GrupoProduct.find(filters)
-                    .populate('createdBy', 'name email')
+                .populate('createdBy', 'name email')
+                .populate('updatedBy', 'name email')
                     .sort({ [sortBy]: order })
                     .skip(skip)
                     .limit(parseInt(limit)),
@@ -71,7 +79,8 @@ class GrupoProductController {
     async getGrupo(req,res){
         try {
            const grupo = await GrupoProduct.findById(req.params.id || req.params._id)
-           .populate('createdBy', 'name email');
+            .populate('createdBy', 'name email')
+            .populate('updatedBy', 'name email');
            if(!grupo) return res.status(404).json({message: 'Grupo no encontrado'});
            res.status(200).json(grupo); 
         } catch (error) {
@@ -85,7 +94,9 @@ class GrupoProductController {
     async getGrupoByCod(req, res) {
         try {
             const codGrupo = req.params.codGrupo;
-            const grupo = await GrupoProduct.findOne({ codGrupo });
+            const grupo = await GrupoProduct.findOne({ codGrupo })
+            .populate('createdBy', 'name email')
+            .populate('updatedBy', 'name email');
 
             if (!grupo) {
                 return res.status(404).json({ message: 'Grupo no encontrado' });
@@ -123,11 +134,19 @@ class GrupoProductController {
 
     async updateGrupo(req, res) {
         try {
+            if (!req.userId) {
+                return res.status(401).json({ message: 'Usuario no autenticado' });
+            }
+
             const updatedGrupo = await GrupoProduct.findByIdAndUpdate(
                 req.params.id,
-                req.body,
+                {
+                    ...req.body,
+                    updatedBy: req.userId
+                },
                 { new: true, runValidators: true }
-            );
+            ).populate('createdBy', 'name email')
+             .populate('updatedBy', 'name email');
 
             if (!updatedGrupo) {
                 return res.status(404).json({ message: 'Grupo no encontrado' });

@@ -5,7 +5,7 @@ const { verifyToken } = require('../../../utils/auth.middleware');
 
 const router = Router();
 
-// router.use(verifyToken);
+router.use(verifyToken);
 
 router.post('/', upload.single('imagen'), productController.createProduct);
 router.post('/:id/imagen', upload.single('imagen'), productController.updateProductImage);

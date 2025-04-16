@@ -4,7 +4,7 @@ const { verifyToken } = require('../../../utils/auth.middleware');
 
 const router = Router();
 
-// router.use(verifyToken);
+router.use(verifyToken);
 
 router.post('/', subGrupoController.createSubGrupo);
 router.get('/', subGrupoController.getSubGrupos);

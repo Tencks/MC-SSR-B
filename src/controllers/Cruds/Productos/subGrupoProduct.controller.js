@@ -5,7 +5,8 @@ class SubGrupoProductController {
         try {
             const newSubGrupo = new SubGrupoProduct({
                 ...req.body,
-                createdBy: req.userId
+                createdBy: req.userId,
+                updatedBy: req.userId
             });
             await newSubGrupo.save();
             res.status(201).json(newSubGrupo);
@@ -138,7 +139,10 @@ class SubGrupoProductController {
         try {
             const updatedSubGrupo = await SubGrupoProduct.findByIdAndUpdate(
                 req.params.id,
-                req.body,
+                {
+                    ...req.body,
+                    updatedBy: req.userId
+                },
                 { new: true, runValidators: true }
             ).populate('grupo', 'codGrupo nombre');
 

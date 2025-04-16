@@ -115,3 +115,8 @@ content-type: application/json
     "stockMinimo": 24,
     "stockMaximo": 1256
 }
+
+###
+GET http://localhost:3000/api/productsGrupos
+###
+GET http://localhost:3000/api/productsSubGrupos

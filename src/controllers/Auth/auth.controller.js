@@ -1,5 +1,5 @@
 const User = require('../../models/Auth/user');
-// const jwt = require('jsonwebtoken');
+const jwt = require('jsonwebtoken');
 const { JWT_SECRET } = require('../../config/config');
 
 class AuthController {

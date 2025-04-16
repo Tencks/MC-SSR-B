@@ -13,7 +13,7 @@ const grupoProductSchema = new Schema({
         type: Schema.Types.ObjectId,
         ref: 'User',  // Asegúrate de que 'User' sea el nombre correcto de tu modelo de usuario
     },
-    updateBy: {
+    updatedBy: {
         type: Schema.Types.ObjectId,
         ref: 'User',  // Asegúrate de que 'User' sea el nombre correcto de tu modelo de usuario
     }

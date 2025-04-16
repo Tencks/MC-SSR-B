@@ -5,13 +5,11 @@ class ProductController {
         try {
             const newProduct = new Product({
                 ...req.body,
-                createdBy: req.userId
+                createdBy: req.userId,
+                updatedBy: req.userId
             });
             await newProduct.save();
-            res.status(201).json(
-                // message: 'Producto creado exitosamente',
-                 newProduct
-            );
+            res.status(201).json(newProduct);
         } catch (error) {
             res.status(500).json({ 
                 message: 'Error al crear producto', 
@@ -115,7 +113,10 @@ class ProductController {
         try {
             const updatedProduct = await Product.findByIdAndUpdate(
                 req.params.id,
-                req.body,
+                {
+                    ...req.body,
+                    updatedBy: req.userId
+                },
                 { new: true, runValidators: true }
             )
             .populate('createdBy', 'name email')
@@ -126,10 +127,7 @@ class ProductController {
                 return res.status(404).json({ message: 'Producto no encontrado' });
             }
 
-            res.status(200).json(
-                // message: 'Producto actualizado exitosamente',
-                 updatedProduct
-            );
+            res.status(200).json(updatedProduct);
         } catch (error) {
             res.status(500).json({ 
                 message: 'Error al actualizar producto', 
