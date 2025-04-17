@@ -17,6 +17,10 @@ const subgrupoProductSchema = new Schema({
     createdBy: {
         type: Schema.Types.ObjectId,
         ref: 'User',  // Asegúrate de que 'User' sea el nombre correcto de tu modelo de usuario
+    },
+    updatedBy: {
+        type: Schema.Types.ObjectId,
+        ref: 'User',  // Asegúrate de que 'User' sea el nombre correcto de tu modelo de usuario
     }
     }, {
     timestamps: true,

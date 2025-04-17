@@ -71,6 +71,7 @@ class ProductController {
             const [products, total] = await Promise.all([
                 Product.find(filters)
                     .populate('createdBy', 'name email')
+                    .populate('updatedBy', 'name email')
                     .populate('grupo', 'codGrupo nombre')
                     .populate('subgrupo', 'codSubGrupo nombre')
                     .sort({ [sortBy]: order })
@@ -93,6 +94,7 @@ class ProductController {
         try {
             const product = await Product.findById(req.params.id)
             .populate('createdBy', 'name email')
+            .populate('updatedBy', 'name email')
             .populate('grupo', 'codGrupo nombre')
             .populate('subgrupo', 'codSubGrupo nombre');
             
@@ -120,6 +122,7 @@ class ProductController {
                 { new: true, runValidators: true }
             )
             .populate('createdBy', 'name email')
+            .populate('updatedBy', 'name email')
             .populate('grupo', 'codGrupo nombre')
             .populate('subgrupo', 'codSubGrupo nombre');    
 
@@ -185,7 +188,11 @@ class ProductController {
                 return res.status(400).json({ message: 'No se ha subido ninguna imagen' });
             }
     
-            const product = await Product.findById(req.params.id);
+            const product = await Product.findById(req.params.id)
+            .populate('createdBy', 'name email')
+            .populate('updatedBy', 'name email')
+            .populate('grupo', 'codGrupo nombre')
+            .populate('subgrupo', 'codSubGrupo nombre');
             if (!product) {
                 return res.status(404).json({ message: 'Producto no encontrado' });
             }
@@ -210,6 +217,8 @@ class ProductController {
         try {
             const codProducto = req.params.codProducto;
             const product = await Product.findOne({ codProducto })
+                .populate('createdBy', 'name email')
+                .populate('updatedBy', 'name email')
                 .populate('grupo', 'codGrupo nombre')
                 .populate('subgrupo', 'codSubGrupo nombre');
 

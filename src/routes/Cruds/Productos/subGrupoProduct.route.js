@@ -8,7 +8,7 @@ router.use(verifyToken);
 
 router.post('/', subGrupoController.createSubGrupo);
 router.get('/', subGrupoController.getSubGrupos);
-// router.get('/:id', subGrupoController.getGrupo);
+router.get('/:id', subGrupoController.getSubGrupo);
 router.put('/:id', subGrupoController.updateSubGrupo);
 router.delete('/:id', subGrupoController.deleteSubGrupo);
 

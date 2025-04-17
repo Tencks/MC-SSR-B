@@ -71,7 +71,10 @@ const ProductSchema = new Schema({
     createdBy: {
         type: Schema.Types.ObjectId,
         ref: 'User',  // Asegúrate de que 'User' sea el nombre correcto de tu modelo de usuario
-        required: true
+    },
+    updatedBy: {
+        type: Schema.Types.ObjectId,
+        ref: 'User',  // Asegúrate de que 'User' sea el nombre correcto de tu modelo de usuario
     }
 }, {
     timestamps: true,

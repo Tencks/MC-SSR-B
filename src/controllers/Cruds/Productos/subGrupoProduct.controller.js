@@ -3,13 +3,25 @@ const SubGrupoProduct = require('../../../models/Cruds/Productos/subgrupo');
 class SubGrupoProductController {
     async createSubGrupo(req, res) {
         try {
+            // Verificar autenticación
+            if (!req.userId) {
+                return res.status(401).json({ message: 'Usuario no autenticado' });
+            }
+    
             const newSubGrupo = new SubGrupoProduct({
                 ...req.body,
                 createdBy: req.userId,
                 updatedBy: req.userId
             });
             await newSubGrupo.save();
-            res.status(201).json(newSubGrupo);
+            
+            // Devolver el objeto con los campos populados
+            const populatedSubGrupo = await SubGrupoProduct.findById(newSubGrupo._id)
+                .populate('createdBy', 'name email')
+                .populate('updatedBy', 'name email')
+                .populate('grupo', 'codGrupo nombre');
+                
+            res.status(201).json(populatedSubGrupo);
         } catch (error) {
             res.status(500).json({ 
                 message: 'Error al crear subgrupo', 
@@ -18,13 +30,25 @@ class SubGrupoProductController {
         }
     }
 
-    async getSubGrupo(req,res){
+    async getSubGrupo(req, res) {
         try {
-           const subgrupo = await SubGrupoProduct.findById(req.params.id || req.params._id)
-           .populate('createdBy', 'name email')
-           .populate('grupo', 'codGrupo nombre');
-           if(!subgrupo) return res.status(404).json({message: 'Subgrupo no encontrado'});
-           res.status(200).json(subgrupo); 
+            // Asegurarse de que se está manejando correctamente el ID
+            const id = req.params.id || req.params._id;
+            
+            if (!id) {
+                return res.status(400).json({ message: 'ID de subgrupo no proporcionado' });
+            }
+            
+            const subgrupo = await SubGrupoProduct.findById(id)
+                .populate('createdBy', 'name email')
+                .populate('updatedBy', 'name email')  // Añadir populate de updatedBy
+                .populate('grupo', 'codGrupo nombre');
+                
+            if (!subgrupo) {
+                return res.status(404).json({ message: 'Subgrupo no encontrado' });
+            }
+            
+            res.status(200).json(subgrupo); 
         } catch (error) {
             res.status(500).json({
                 message: 'Error al obtener subgrupo',
@@ -32,6 +56,8 @@ class SubGrupoProductController {
             });
         }
     }
+
+    
 
     async getSubGrupos(req, res) {
         try {
@@ -68,6 +94,7 @@ class SubGrupoProductController {
             const [subgrupos, total] = await Promise.all([
                 SubGrupoProduct.find(filters)
                     .populate('createdBy', 'name email')
+                    .populate('updatedBy', 'name email')
                     .populate('grupo', 'codGrupo nombre')
                     .sort({ [sortBy]: order })
                     .skip(skip)
@@ -88,6 +115,8 @@ class SubGrupoProductController {
         try {
             const codSubGrupo = req.params.codSubGrupo;
             const subgrupo = await SubGrupoProduct.findOne({ codSubGrupo })
+                .populate('createdBy', 'name email')
+                .populate('updatedBy', 'name email')
                 .populate('grupo', 'codGrupo nombre');
 
             if (!subgrupo) {
@@ -123,6 +152,8 @@ class SubGrupoProductController {
             }
 
             const subgrupos = await SubGrupoProduct.find(filters)
+                .populate('createdBy', 'name email')
+                .populate('updatedBy', 'name email')
                 .populate('grupo', 'codGrupo nombre')
                 .limit(10);
 
@@ -144,7 +175,10 @@ class SubGrupoProductController {
                     updatedBy: req.userId
                 },
                 { new: true, runValidators: true }
-            ).populate('grupo', 'codGrupo nombre');
+            )
+            .populate('createdBy', 'name email')
+            .populate('updatedBy', 'name email')
+            .populate('grupo', 'codGrupo nombre');
 
             if (!updatedSubGrupo) {
                 return res.status(404).json({ message: 'Subgrupo no encontrado' });
