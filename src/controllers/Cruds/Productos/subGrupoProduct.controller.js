@@ -1,4 +1,5 @@
 const SubGrupoProduct = require('../../../models/Cruds/Productos/subgrupo');
+const GrupoProduct = require('../../../models/Cruds/Productos/grupo');
 
 class SubGrupoProductController {
     async createSubGrupo(req, res) {
@@ -227,6 +228,54 @@ class SubGrupoProductController {
                 message: 'Error al obtener subgrupos por grupo',
                 error: error.message
             });
+        }
+    }
+
+    async associateSubgrupoWithGrupo(req, res) {
+        try {
+            const { subgrupoId, grupoId } = req.body;
+            
+            // Actualizar el subgrupo con la referencia al grupo
+            const subgrupo = await SubGrupoProduct.findByIdAndUpdate(
+                subgrupoId,
+                { grupo: grupoId },
+                { new: true }
+            ).populate('grupo', 'codGrupo nombre');
+
+            // Actualizar el grupo añadiendo el subgrupo al array
+            await GrupoProduct.findByIdAndUpdate(
+                grupoId,
+                { $addToSet: { subgrupos: subgrupoId } },
+                { new: true }
+            );
+
+            res.json(subgrupo);
+        } catch (error) {
+            res.status(500).json({ message: error.message });
+        }
+    }
+
+    async disassociateSubgrupoFromGrupo(req, res) {
+        try {
+            const { subgrupoId, grupoId } = req.body;
+            
+            // Remover la referencia del grupo en el subgrupo
+            const subgrupo = await SubGrupoProduct.findByIdAndUpdate(
+                subgrupoId,
+                { $unset: { grupo: "" } },
+                { new: true }
+            );
+
+            // Remover el subgrupo del array en el grupo
+            await GrupoProduct.findByIdAndUpdate(
+                grupoId,
+                { $pull: { subgrupos: subgrupoId } },
+                { new: true }
+            );
+
+            res.json(subgrupo);
+        } catch (error) {
+            res.status(500).json({ message: error.message });
         }
     }
 }

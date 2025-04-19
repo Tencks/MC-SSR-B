@@ -1,5 +1,6 @@
 
 const GrupoProduct = require('../../../models/Cruds/Productos/grupo');
+const SubGrupoProduct = require('../../../models/Cruds/Productos/subgrupo');
 
 class GrupoProductController {
     async createGrupo(req, res) {
@@ -16,7 +17,8 @@ class GrupoProductController {
             await newGrupo.save();
             
             const populatedGrupo = await GrupoProduct.findById(newGrupo._id)
-                .populate('createdBy', 'name email');
+                .populate('createdBy', 'name email')
+                .populate('updatedBy', 'name email');
                 
             res.status(201).json(populatedGrupo);
         } catch (error) {
@@ -80,7 +82,8 @@ class GrupoProductController {
         try {
            const grupo = await GrupoProduct.findById(req.params.id || req.params._id)
             .populate('createdBy', 'name email')
-            .populate('updatedBy', 'name email');
+            .populate('updatedBy', 'name email')
+            .populate('subgrupos', 'nombre codSubGrupo prefijo bonif  comision active' )
            if(!grupo) return res.status(404).json({message: 'Grupo no encontrado'});
            res.status(200).json(grupo); 
         } catch (error) {
@@ -96,7 +99,8 @@ class GrupoProductController {
             const codGrupo = req.params.codGrupo;
             const grupo = await GrupoProduct.findOne({ codGrupo })
             .populate('createdBy', 'name email')
-            .populate('updatedBy', 'name email');
+            .populate('updatedBy', 'name email')
+            .populate('subgrupos', 'nombre codSubGrupo prefijo bonif  comision active' )
 
             if (!grupo) {
                 return res.status(404).json({ message: 'Grupo no encontrado' });
@@ -146,7 +150,8 @@ class GrupoProductController {
                 },
                 { new: true, runValidators: true }
             ).populate('createdBy', 'name email')
-             .populate('updatedBy', 'name email');
+             .populate('updatedBy', 'name email')
+             .populate('subgrupos', 'nombre codSubGrupo prefijo bonif  comision active' );
 
             if (!updatedGrupo) {
                 return res.status(404).json({ message: 'Grupo no encontrado' });
@@ -178,6 +183,58 @@ class GrupoProductController {
                 message: 'Error al eliminar grupo', 
                 error: error.message 
             });
+        }
+    }
+
+    async associateSubgrupoWithGrupo(req, res) {
+        try {
+            const { subgrupoId, grupoId } = req.body;
+            
+            // Actualizar el subgrupo con la referencia al grupo
+            const subgrupo = await SubGrupoProduct.findByIdAndUpdate(
+                subgrupoId,
+                { grupo: grupoId },
+                { new: true }
+            )
+             .populate('createdBy', 'name email')
+             .populate('updatedBy', 'name email')
+             .populate('subgrupos', 'nombre codSubGrupo prefijo bonif  comision active' )
+             .populate('grupo', 'codGrupo nombre');
+    
+            // Actualizar el grupo añadiendo el subgrupo al array
+            await GrupoProduct.findByIdAndUpdate(
+                grupoId,
+                { $addToSet: { subgrupos: subgrupoId } },
+                { new: true }
+            );
+    
+            res.json(subgrupo);
+        } catch (error) {
+            res.status(500).json({ message: error.message });
+        }
+    }
+    
+    async dissociateSubgrupoFromGrupo(req, res) {
+        try {
+            const { subgrupoId, grupoId } = req.body;
+            
+            // Remover la referencia del grupo en el subgrupo
+            const subgrupo = await SubGrupoProduct.findByIdAndUpdate(
+                subgrupoId,
+                { $unset: { grupo: "" } },
+                { new: true }
+            );
+    
+            // Remover el subgrupo del array en el grupo
+            await GrupoProduct.findByIdAndUpdate(
+                grupoId,
+                { $pull: { subgrupos: subgrupoId } },
+                { new: true }
+            );
+    
+            res.json(subgrupo);
+        } catch (error) {
+            res.status(500).json({ message: error.message });
         }
     }
 }

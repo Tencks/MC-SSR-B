@@ -14,5 +14,7 @@ router.delete('/:id', grupoController.deleteGrupo);
 
 router.get('/codigo/:codGrupo', grupoController.getGrupoByCod);
 
+router.post('/associate',  grupoController.associateSubgrupoWithGrupo);
+router.post('/dissociate', grupoController.dissociateSubgrupoFromGrupo);
 
 module.exports = router;

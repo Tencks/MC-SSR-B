@@ -13,6 +13,10 @@ router.put('/:id', subGrupoController.updateSubGrupo);
 router.delete('/:id', subGrupoController.deleteSubGrupo);
 
 router.get('/codigo/:codSubGrupo', subGrupoController.getSubGrupoByCod);
+router.get('/grupo/:idGrupo', subGrupoController.getSubGruposByGrupo);
+
+router.post('/associate',  subGrupoController.associateSubgrupoWithGrupo);
+router.post('/disassociate', subGrupoController.disassociateSubgrupoFromGrupo);
 
 
 module.exports = router;
