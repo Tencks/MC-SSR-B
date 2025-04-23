@@ -145,10 +145,21 @@ class SubGrupoProductController {
                 filters.grupo = grupo;
             }
 
+            let gruposIds =[];
             if (search) {
+                const gruposEncontrados = await GrupoProduct.find({
+                  nombre: { $regex: search, $options: 'i' }
+                    // $or: [
+                    //     { codGrupo: { $regex: search, $options: 'i' } },
+                    //     { nombre: { $regex: search, $options: 'i' } }
+                    // ]
+                });
+                gruposIds = gruposEncontrados.map(grupo => grupo._id);
+
                 filters.$or = [
                     { nombre: { $regex: search, $options: 'i' } },
-                    { codSubGrupo: { $regex: search, $options: 'i' } }
+                    { codSubGrupo: { $regex: search, $options: 'i' } },
+                    { grupo: { $in: gruopsIds } }
                 ];
             }
 
@@ -235,19 +246,33 @@ class SubGrupoProductController {
         try {
             const { subgrupoId, grupoId } = req.body;
             
+            // Primero actualizamos el grupo para asegurar que se añade el subgrupo al array
+            await GrupoProduct.findByIdAndUpdate(
+                grupoId,
+                { $addToSet: { subgrupos: subgrupoId } },
+                { new: true }
+            ).populate('subgrupos');
+
             // Actualizar el subgrupo con la referencia al grupo
             const subgrupo = await SubGrupoProduct.findByIdAndUpdate(
                 subgrupoId,
                 { grupo: grupoId },
                 { new: true }
-            ).populate('grupo', 'codGrupo nombre');
+            )
+             .populate('createdBy', 'name email')
+             .populate('updatedBy', 'name email')
+             .populate('grupo', 'codGrupo nombre');
+    
+            // Verificamos la asociación comparando los IDs como strings
+            // const subgrupoEncontrado = grupoActualizado.subgrupos.some(
+            //     sub => sub._id.toString() === subgrupoId.toString()
+            // );
 
-            // Actualizar el grupo añadiendo el subgrupo al array
-            await GrupoProduct.findByIdAndUpdate(
-                grupoId,
-                { $addToSet: { subgrupos: subgrupoId } },
-                { new: true }
-            );
+            // if (!subgrupoEncontrado) {
+            //     console.log('Grupo actualizado:', grupoActualizado);
+            //     console.log('Subgrupo ID buscado:', subgrupoId);
+            //     throw new Error('No se realizó la asociación bidireccional');
+            // }
 
             res.json(subgrupo);
         } catch (error) {
